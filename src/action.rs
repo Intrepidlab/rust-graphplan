@@ -64,8 +64,10 @@ impl<'a, ActionId: Hash + Clone, PropositionId: Display + Hash + Clone + Partial
     pub fn new_maintenance(prop: &'a Proposition<PropositionId>) -> Action<'a, ActionId, PropositionId> {
         Action {
             id: ActionType::Maintenance(prop),
-            reqs: hashset!{prop},
-            effects: hashset!{prop},
+            reqs: fragset!{[prop]},
+            // reqs: hashset!{prop},
+            effects: fragset!{[prop]},
+            // effects: hashset!{prop},
         }
     }
 
@@ -90,21 +92,21 @@ mod test_action {
 
     #[test]
     fn equality_works() {
-        let a: Action<TestActionId, &str> = Action::new(TestActionId::A, hashset!{}, hashset!{});
+        let a: Action<TestActionId, &str> = Action::new(TestActionId::A, fragset!{}, fragset!{});
         assert_eq!(a.clone(), a.clone());
 
-        let a2 = Action::new(TestActionId::A, hashset!{}, hashset!{});
+        let a2 = Action::new(TestActionId::A, fragset!{}, fragset!{});
         assert_eq!(a, a2);
 
-        let b = Action::new(TestActionId::B, hashset!{}, hashset!{});
+        let b = Action::new(TestActionId::B, fragset!{}, fragset!{});
         assert_ne!(a, b);
     }
 
     #[test]
     fn hashing_works() {
-        let a1: Action<TestActionId, &str> = Action::new(TestActionId::A, hashset!{}, hashset!{});
-        let a2 = Action::new(TestActionId::A, hashset!{}, hashset!{});
-        let set = hashset!{a1, a2};
+        let a1: Action<TestActionId, &str> = Action::new(TestActionId::A, fragset!{}, fragset!{});
+        let a2 = Action::new(TestActionId::A, fragset!{}, fragset!{});
+        let set = fragset!{[a1, a2]};
         assert_eq!(set.len(), 1);
     }
 

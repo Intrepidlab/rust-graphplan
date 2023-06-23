@@ -147,7 +147,10 @@ impl<'a,
                     // Check if this action is mutex with any of
                     // the other accumulated actions
                     let acts = accum.values().copied().collect();
-                    let pairs = pairs_from_sets(hashset!{*a}, acts);
+                    let pairs = pairs_from_sets(
+                        // fragset!{*a},
+                        fragset!{[*a]},
+                        acts);
                     debug!("Checking pairs: {:?} against mutexes: {:?}", &pairs, &self.meta.mutexes);
 
                     if let Some(muxes) = &self.meta.mutexes {
@@ -219,8 +222,8 @@ mod goal_set_action_generator_test {
         let mut actions = BTreeSet::new();
         let a1 = Action::new(
             String::from("drink coffee"),
-            hashset!{&p1},
-            hashset!{&p2}
+            fragset!{[&p1]},
+            fragset!{[&p2]}
         );
         actions.insert(&a1);
 
@@ -242,14 +245,14 @@ mod goal_set_action_generator_test {
 
         let a1 = Action::new(
             String::from("drink coffee"),
-            hashset!{&p1},
-            hashset!{&p2}
+            fragset!{[&p1]},
+            fragset!{[&p2]}
         );
 
         let a2 = Action::new(
             String::from("eat breakfast"),
-            hashset!{&p3},
-            hashset!{&p4}
+            fragset!{[&p3]},
+            fragset!{[&p4]}
         );
 
         let actions = btreeset!{&a1, &a2};
@@ -273,10 +276,10 @@ mod goal_set_action_generator_test {
         let p5 = Proposition::from("muffin");
         let p6 = Proposition::from("full");
 
-        let a1 = Action::new("drink coffee", hashset!{&p2}, hashset!{&p3});
-        let a2 = Action::new("drink tea", hashset!{&p1}, hashset!{&p3});
-        let a3 = Action::new("eat scone", hashset!{&p4}, hashset!{&p6});
-        let a4 = Action::new("eat muffin", hashset!{&p5}, hashset!{&p6});
+        let a1 = Action::new("drink coffee", fragset!{[&p2]}, fragset!{[&p3]});
+        let a2 = Action::new("drink tea", fragset!{[&p1]}, fragset!{[&p3]});
+        let a3 = Action::new("eat scone", fragset!{[&p4]}, fragset!{[&p6]});
+        let a4 = Action::new("eat muffin", fragset!{[&p5]}, fragset!{[&p6]});
 
         let actions = btreeset!{&a1, &a2, &a3, &a4};
         let goals = btreeset!{&p3, &p6};
@@ -428,14 +431,14 @@ mod simple_solver_test {
 
         let a1 = Action::new(
             String::from("coffee"),
-            hashset!{&p1},
-            hashset!{&not_p1}
+            fragset!{[&p1]},
+            fragset!{[&not_p1]}
         );
 
         let a2 = Action::new(
             String::from("walk dog"),
-            hashset!{&p2, &not_p1},
-            hashset!{&not_p2},
+            fragset!{[&p2, &not_p1]},
+            fragset!{[&not_p2]},
         );
 
         let a3 = Action::new_maintenance(&p1);
@@ -443,9 +446,9 @@ mod simple_solver_test {
         let a5 = Action::new_maintenance(&p2);
         let a6 = Action::new_maintenance(&not_p2);
 
-        let initial_props = hashset!{&p1, &p2};
-        let goals = hashset!{&not_p1, &not_p2};
-        let actions = hashset!{&a1, &a2, &a3, &a4, &a5, &a6};
+        let initial_props = fragset!{[&p1, &p2]};
+        let goals = fragset!{[&not_p1, &not_p2]};
+        let actions = fragset!{[&a1, &a2, &a3, &a4, &a5, &a6]};
 
         let mut pg = PlanGraph::new(
             initial_props,
@@ -455,7 +458,7 @@ mod simple_solver_test {
         pg.extend();
         pg.extend();
 
-        let expected = vec![hashset!{&a1}, hashset!{&a2}];
+        let expected = vec![fragset!{[&a1]}, fragset!{[&a2]}];
         let actual = SimpleSolver::search(&pg).unwrap();
         assert_eq!(expected, actual);
     }

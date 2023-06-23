@@ -159,9 +159,9 @@ mod plangraph_test {
     #[test]
     fn extend_plangraph_works() {
         let mut plangraph: PlanGraph<&'static str, &'static str> = PlanGraph::new(
-            hashset!{},
-            hashset!{},
-            hashset!{},
+            fragset!{},
+            fragset!{},
+            fragset!{},
         );
 
         assert_eq!(plangraph.depth(), 0);
@@ -172,9 +172,9 @@ mod plangraph_test {
     #[test]
     fn has_leveled_off_works() {
         let mut plangraph: PlanGraph<&'static str, &'static str> = PlanGraph::new(
-            hashset!{},
-            hashset!{},
-            hashset!{},
+            fragset!{},
+            fragset!{},
+            fragset!{},
         );
 
         assert_eq!(plangraph.has_leveled_off(), false);

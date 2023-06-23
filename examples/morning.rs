@@ -14,26 +14,26 @@ fn main() {
 
     let a1 = Action::new(
         "drink coffee",
-        hashset!{&p1},
-        hashset!{&not_p1}
+        fragset!{[&p1]},
+        fragset!{[&not_p1]}
     );
 
     let a2 = Action::new(
         "walk dog",
-        hashset!{&p2, &not_p1},
-        hashset!{&not_p2},
+        fragset!{[&p2, &not_p1]},
+        fragset!{[&not_p2]},
     );
 
     let a3 = Action::new(
         "go to work",
-        hashset!{&not_p1, &not_p2},
-        hashset!{&p3},
+        fragset!{[&not_p1, &not_p2]},
+        fragset!{[&p3]},
     );
 
     let domain = GraphPlan::create_domain(
-        hashset!{&p1, &p2, &p4},
-        hashset!{&not_p1, &not_p2, &p3},
-        hashset!{&a1, &a2, &a3}
+        fragset!{[&p1, &p2, &p4]},
+        fragset!{[&not_p1, &not_p2, &p3]},
+        fragset!{[&a1, &a2, &a3]}
     );
     let mut pg = GraphPlan::from_domain(&domain);
 

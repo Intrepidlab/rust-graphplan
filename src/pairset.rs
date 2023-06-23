@@ -56,7 +56,7 @@ mod pair_set_test {
         );
 
         assert!(
-            !hashset! {PairSet::<&'static str>("test1", "test2")}
+            !fragset! {[PairSet::<&'static str>("test1", "test2")]}
                 .insert(PairSet::<&'static str>("test2", "test1")),
             "Hashed value should be the same regardless of order"
         )
@@ -137,26 +137,26 @@ mod pairs_test {
         let p2 = "b";
         let p3 = "c";
         assert_eq!(
-            hashset! {PairSet(p1.clone(), p2.clone()),
+            fragset! {[PairSet(p1.clone(), p2.clone()),
             PairSet(p1.clone(), p3.clone()),
-            PairSet(p2.clone(), p3.clone())},
-            pairs(&hashset! {p1.clone(), p2.clone(), p3.clone()})
+            PairSet(p2.clone(), p3.clone())]},
+            pairs(&fragset! {[p1.clone(), p2.clone(), p3.clone()]})
         );
     }
 
     #[test]
     fn yields_unique_pairs_from_sets() {
         assert_eq!(
-            pairs_from_sets(hashset! {1, 2}, hashset! {3}),
-            hashset! {PairSet(1, 3), PairSet(2, 3)}
+            pairs_from_sets(fragset! {[1, 2]}, fragset! {[3]}),
+            fragset! {[PairSet(1, 3), PairSet(2, 3)]}
         );
 
         assert_eq!(
-            pairs_from_sets(hashset! {1}, hashset! {1, 2}),
-            hashset! {PairSet(1, 2)}
+            pairs_from_sets(fragset! {[1]}, fragset! {[1, 2]}),
+            fragset! {[PairSet(1, 2)]}
         );
 
-        assert_eq!(pairs_from_sets(hashset! {}, hashset! {1, 2}), hashset! {});
+        assert_eq!(pairs_from_sets(fragset! {}, fragset! {[1, 2]}), fragset! {});
     }
 
     #[test]
@@ -169,24 +169,24 @@ mod pairs_test {
 
         let a1 = Action::new(
             String::from("coffee"),
-            hashset! {&p1},
-            hashset! {&p3, &not_p1},
+            fragset! {[&p1]},
+            fragset! {[&p3, &not_p1]},
         );
         let a2 = Action::new(
             String::from("walk dog"),
-            hashset! {&p2, &p3},
-            hashset! {&not_p2},
+            fragset! {[&p2, &p3]},
+            fragset! {[&not_p2]},
         );
         let a3 = Action::new_maintenance(&not_p1);
 
         assert_eq!(
-            pairs_from_sets(hashset! {a1.clone()}, hashset! {a2.clone()}),
-            hashset! {PairSet(a1.clone(), a2.clone())}
+            pairs_from_sets(fragset! {[a1.clone()]}, fragset! {[a2.clone()]}),
+            fragset! {[PairSet(a1.clone(), a2.clone())]}
         );
 
         assert_eq!(
-            pairs_from_sets(hashset! {a3.clone()}, hashset! {a2.clone()}),
-            hashset! {PairSet(a3, a2)}
+            pairs_from_sets(fragset! {[a3.clone()]}, fragset! {[a2.clone()]}),
+            fragset! {[PairSet(a3, a2)]}
         );
     }
 }

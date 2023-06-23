@@ -8,25 +8,47 @@
 /// #[macro_use] extern crate graphplan;
 /// # fn main() {
 ///
-/// let set = hashset!{"a", "b"};
+/// let set = fragset!{["a", "b"]};
 /// assert!(set.contains("a"));
 /// assert!(set.contains("b"));
 /// assert!(!set.contains("c"));
 /// # }
 /// ```
-macro_rules! hashset {
-    (@single $($x:tt)*) => (());
-    (@count $($rest:expr),*) => (<[()]>::len(&[$(hashset!(@single $rest)),*]));
 
-    ($($key:expr,)+) => { hashset!($($key),+) };
+
+// macro_rules! hashset {
+//     (@single $($x:tt)*) => (());
+//     (@count $($rest:expr),*) => (<[()]>::len(&[$(fragset!(@single $rest)),*]));
+
+//     ($($key:expr,)+) => { fragset!($($key),+) };
+//     ($($key:expr),*) => {
+//         {
+//             let _cap = fragset!(@count $($key),*);
+//             let mut _set = ::std::collections::HashSet::with_capacity(_cap);
+//             $(
+//                 let _ = _set.insert($key);
+//             )*
+//                 _set
+//         }
+//     };
+// }
+
+#[macro_export]
+macro_rules! fragset {
+    (@single $($x:tt)*) => (());
+    (@count $($rest:expr),*) => (<[()]>::len(&[$(fragset!(@single $rest)),*]));
+
+    ($($key:expr,)+) => { fragset!($($key),+) };
     ($($key:expr),*) => {
         {
-            let _cap = hashset!(@count $($key),*);
-            let mut _set = ::std::collections::HashSet::with_capacity(_cap);
+            // let _cap = fragset!(@count $($key),*);
+            // let mut _set = ::std::collections::HashSet::with_capacity(_cap);
+            let mut _set = ::std::collections::HashSet::new();
             $(
-                let _ = _set.insert($key);
+                _set = $key.iter().cloned().collect();
+                // let _ = _set.extend($key.into_iter());
             )*
-                _set
+            _set
         }
     };
 }

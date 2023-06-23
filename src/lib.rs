@@ -1,6 +1,7 @@
 use std::collections::{HashSet};
 use std::hash::Hash;
-use std::fmt::{Debug, Display};
+use std::fmt;
+use std::fmt::{Debug, Display, Formatter};
 use log::{debug};
 
 #[macro_use] pub mod macros;
@@ -32,6 +33,21 @@ pub struct GraphPlan<'a,
                      ActionId: Debug + Hash + Ord + Clone,
                      PropositionId: Debug + Display + Hash + Ord + Clone> {
     plangraph: PlanGraph<'a, ActionId, PropositionId>,
+}
+
+impl<'a, ActionId, PropositionId> Display for GraphPlan<'a, ActionId, PropositionId>
+where
+    ActionId: Debug + Hash + Ord + Clone,
+    PropositionId: Debug + Display + Hash + Ord + Clone,
+{
+    fn fmt(&self, f: &mut Formatter) -> fmt::Result {
+        writeln!(f, "{:?}", self.plangraph)?;
+
+        // for action in self.plangraph.actions() {
+        //     writeln!(f, "{}", action)?;
+        // }
+        Ok(())
+    }
 }
 
 impl<'a,
@@ -155,19 +171,19 @@ mod integration_test {
 
         let a1 = Action::new(
             "coffee",
-            hashset!{&p1},
-            hashset!{&not_p1}
+            fragset!{[&p1]},
+            fragset!{[&not_p1]}
         );
 
         let a2 = Action::new(
             "walk dog",
-            hashset!{&p2, &not_p1},
-            hashset!{&not_p2},
+            fragset!{[&p2, &not_p1]},
+            fragset!{[&not_p2]},
         );
 
-        let actions = hashset!{&a1, &a2};
-        let initial_props = hashset!{&p1, &p2};
-        let goals = hashset!{&not_p1, &not_p2};
+        let actions = fragset!{[&a1, &a2]};
+        let initial_props = fragset!{[&p1, &p2]};
+        let goals = fragset!{[&not_p1, &not_p2]};
 
         let domain = GraphPlan::create_domain(
             initial_props,

@@ -54,6 +54,14 @@ impl From<&'static str> for Proposition<&'static str> {
     }
 }
 
+
+impl From<String> for Proposition<String> {
+    fn from(s: String) -> Self {
+        Proposition {id: s, negation: false}
+    }
+}
+
+
 #[cfg(test)]
 mod proposition_test {
     use super::*;
@@ -83,7 +91,7 @@ mod proposition_test {
 
         assert!(
             p2.is_negation(&p1),
-            format!("{:?} is not a negation of {:?}", p1, p2)
+            "{:?} is not a negation of {:?}", p1, p2
         );
 
         assert!(p1.is_negation(&p2));
@@ -91,13 +99,13 @@ mod proposition_test {
 
     #[test]
     fn proposition_hashing_works() {
-        let set = hashset!{Proposition::from("caffeinated")};
+        let set = fragset!{[Proposition::from("caffeinated")]};
         assert!(set.contains(&Proposition::from("caffeinated")));
 
-        let set = hashset!{Proposition::from("caffeinated").negate()};
+        let set = fragset!{[Proposition::from("caffeinated").negate()]};
         assert!(set.contains(&Proposition::from("caffeinated").negate()));
 
-        let set = hashset!{Proposition::from("caffeinated").negate()};
+        let set = fragset!{[Proposition::from("caffeinated").negate()]};
         assert!(!set.contains(&Proposition::from("caffeinated")));
     }
 
@@ -105,7 +113,7 @@ mod proposition_test {
     fn proposition_ids_are_extensible() {
         let p1 = Proposition::from(Props::A);
         let p2 = Proposition::from(Props::B);
-        let set = hashset!{p1.clone()};
+        let set = fragset!{[p1.clone()]};
         assert!(set.contains(&p1));
         assert!(!set.contains(&p2));
     }

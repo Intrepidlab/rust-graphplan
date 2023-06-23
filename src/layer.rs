@@ -210,10 +210,10 @@ mod from_layer_test {
     fn action_layer_from_proposition_layer() {
         let prop = Proposition::from("test");
         let action = Action::new_maintenance(&prop);
-        let layer = Layer::<&str, &str>::PropositionLayer(hashset!{&prop});
-        let actions = hashset!{&action};
+        let layer = Layer::<&str, &str>::PropositionLayer(fragset!{[&prop]});
+        let actions = fragset!{[&action]};
         let actual = Layer::from_layer(&actions, &layer);
-        let expected = Layer::ActionLayer(hashset!{&action});
+        let expected = Layer::ActionLayer(fragset!{[&action]});
         assert_eq!(expected, actual);
     }
 }
@@ -227,20 +227,20 @@ mod mutex_test {
         let p1 = Proposition::from("caffeinated");
         let p2 = Proposition::from("coffee");
         let p3 = p2.negate();
-        let actions = hashset!{};
+        let actions = fragset!{};
         let a1 = Action::new(
             "drink coffee",
-            hashset!{&p2},
-            hashset!{&p1, &p3},
+            fragset!{[&p2]},
+            fragset!{[&p1, &p3]},
         );
         let a2 = Action::new(
             "make coffee",
-            hashset!{},
-            hashset!{&p2},
+            fragset!{},
+            fragset!{[&p2]},
         );
-        let action_mutexes = hashset!{PairSet(&a1, &a2)};
-        let expected = hashset!{PairSet(&p1, &p2)};
-        let props = hashset!{&p1, &p2};
+        let action_mutexes = fragset!{[PairSet(&a1, &a2)]};
+        let expected = fragset!{[PairSet(&p1, &p2)]};
+        let props = fragset!{[&p1, &p2]};
         assert_eq!(
             expected,
             Layer::proposition_mutexes(&props, &actions, Some(action_mutexes))
@@ -253,16 +253,16 @@ mod mutex_test {
         let not_prop = prop.negate();
         let a1 = Action::new(
             "drink coffee",
-            hashset!{},
-            hashset!{&not_prop}
+            fragset!{},
+            fragset!{[&not_prop]}
         );
 
         let a2 = Action::new(
             "make coffee",
-            hashset!{},
-            hashset!{&prop}
+            fragset!{},
+            fragset!{[&prop]}
         );
-        let actions = hashset!{&a1, &a2};
+        let actions = fragset!{[&a1, &a2]};
         let props = MutexPairs::new();
         let actual = Layer::action_mutexes(&actions, Some(&props));
 
@@ -278,16 +278,16 @@ mod mutex_test {
         let not_prop = prop.negate();
         let a1 = Action::new(
             "eat sandwich",
-            hashset!{&prop},
-            hashset!{&not_prop}
+            fragset!{[&prop]},
+            fragset!{[&not_prop]}
         );
 
         let a2 = Action::new(
             "eat soup",
-            hashset!{&prop},
-            hashset!{&not_prop}
+            fragset!{[&prop]},
+            fragset!{[&not_prop]}
         );
-        let actions = hashset!{&a1, &a2};
+        let actions = fragset!{[&a1, &a2]};
         let props = MutexPairs::new();
         let actual = Layer::action_mutexes(&actions, Some(&props));
 
@@ -303,16 +303,16 @@ mod mutex_test {
         let not_prop = prop.negate();
         let a1 = Action::new(
             "eat sandwich",
-            hashset!{&prop},
-            hashset!{&not_prop}
+            fragset!{[&prop]},
+            fragset!{[&not_prop]}
         );
 
         let a2 = Action::new(
             "eat soup",
-            hashset!{&prop},
-            hashset!{&not_prop}
+            fragset!{[&prop]},
+            fragset!{[&not_prop]}
         );
-        let actions = hashset!{&a1, &a2};
+        let actions = fragset!{[&a1, &a2]};
         let mut mutex_props = MutexPairs::new();
         mutex_props.insert(PairSet(&prop, &not_prop));
         let actual = Layer::action_mutexes(&actions, Some(&mutex_props));
@@ -327,10 +327,10 @@ mod mutex_test {
     fn action_mutexes_due_to_conflicting_reqs() {
         let prop = Proposition::from("hungry");
         let not_prop = prop.negate();
-        let a1 = Action::new("eat sandwich", hashset!{&prop}, hashset!{});
-        let a2 = Action::new("go to work", hashset!{&not_prop}, hashset!{});
+        let a1 = Action::new("eat sandwich", fragset!{[&prop]}, fragset!{});
+        let a2 = Action::new("go to work", fragset!{[&not_prop]}, fragset!{});
 
-        let actions = hashset!{&a1, &a2};
+        let actions = fragset!{[&a1, &a2]};
         let actual = Layer::action_mutexes(&actions, None);
 
         let mut expected = MutexPairs::new();
