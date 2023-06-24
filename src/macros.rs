@@ -41,8 +41,6 @@ macro_rules! fragset {
     ($($key:expr,)+) => { fragset!($($key),+) };
     ($($key:expr),*) => {
         {
-            // let _cap = fragset!(@count $($key),*);
-            // let mut _set = ::std::collections::HashSet::with_capacity(_cap);
             let mut _set = ::std::collections::HashSet::new();
             $(
                 _set = $key.iter().cloned().collect();
